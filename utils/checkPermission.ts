@@ -1,4 +1,4 @@
-import jsonwebtoken from "jsonwebtoken";
+import jsonwebtoken, {JwtHeader, JwtPayload} from "jsonwebtoken";
 
 function getQueryName(req) {
     const splitByWhitespace = req.body.query.split("(")[0].split(" ");
@@ -11,10 +11,22 @@ export function checkPermission(req, res, next) {
     const fullToken = req.header("Authorization");
     if (!fullToken)
         return res.status(403).send("Unauthorized!");
-    const token = fullToken.substring(7)
+    const bearerToken = fullToken.substring(7)
     const secret = process.env.JWT_SECRET
     try {
-        jsonwebtoken.verify(token, secret);
+        const token = jsonwebtoken.verify(bearerToken, secret) as JwtPayload;
+        const role = token.user.role;
+        switch (role) {
+            case "worker":
+                if (["makeASell","searchForProducts", "getAllProducts"].indexOf(queryName) === -1)
+                    return res.status(403).send("Unauthorized!");
+                break
+            case "client":
+                if (["searchForProducts", "getAllProducts"].indexOf(queryName) === -1)
+                    return res.status(403).send("Unauthorized!");
+                break
+        }
+
     } catch (e) {
         return res.status(403).send("Unauthorized!");
     }

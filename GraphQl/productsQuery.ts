@@ -33,7 +33,7 @@ export const searchForProducts = async ({name}) => {
 export const productStatus = async ({name}) => {
     const nameLower = name.toLowerCase();
     const product = await productRepository.createQueryBuilder("product").where("LOWER(product.name)" +
-        " like :name", { name:`%${nameLower}%` }).getOne();
+        " like :name", { name:`${nameLower}` }).getOne();
     if (!product )return {message:`There is no product containing '${name}'`};
     const status = product.quantity>0? "Available":"Sold Out";
     return {name:product.name,status:status};

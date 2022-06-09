@@ -1,6 +1,8 @@
 import jsonwebtoken, {JwtHeader, JwtPayload} from "jsonwebtoken";
 
 function getQueryName(req) {
+    if (!req.body.query)
+        return null;
     const splitByWhitespace = req.body.query.split("(")[0].split(" ");
     return splitByWhitespace[splitByWhitespace.length - 1]
 }

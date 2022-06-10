@@ -12,9 +12,9 @@ export const addAnProduct = async ({
                                        imgSrc
                                    }) => {
     try {
-        name = getFormattedName(name)
+        const nameFormatted = getFormattedName(name)
         return await productRepository.save({
-            name,
+            nameFormatted,
             quantity,
             imgSrc
         });
@@ -29,7 +29,10 @@ export const makeASell = async ({
                                     nameOfProduct,
                                     numberOfItemsSold
                                 }) => {
-    const item: Product = await productRepository.findOneBy({name: nameOfProduct});
+    nameOfProduct = getFormattedName(nameOfProduct)
+    const nameLower = nameOfProduct.toLowerCase();
+    const item: Product = await productRepository.createQueryBuilder("product").where("LOWER(product.name)" +
+        " = :name", {name:nameLower}).getOne();
     if (!item)
         throw new Error(`'${nameOfProduct}' doesn't exist!`);
     checkIfQuantityIsValid(item.quantity, numberOfItemsSold);

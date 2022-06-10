@@ -8,24 +8,25 @@ import "reflect-metadata";
 import {graphqlHTTP} from 'express-graphql';
 import {AppDataSource} from "./data-source";
 import {checkPermission} from "./utils/checkPermission";
-import cors from 'cors';
 import {
     root,
     schema
 } from "./GraphQl/schema";
-
 const PORT = process.env.PORT || 3001;
 const app: Express = express();
 
-app.use(cors({
-    origin: ["https://warehouse-staff.herokuapp.com","http://localhost:3000"]
-}))
+app.use((req, res, next)=>{
+    res.setHeader('Access-Control-Allow-Origin', 'https://warehouse-staff.herokuapp.com');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type,Authorization');
+    next();
+});
 app.use(express.json())
 app.use('/server',checkPermission,graphqlHTTP({
     schema,
     rootValue: root
 }));
-app.use('',(req, res,) => {
+app.use('',(req, res) => {
     res.status(404).send("page not found");
 });
 app.listen(PORT, async () => {

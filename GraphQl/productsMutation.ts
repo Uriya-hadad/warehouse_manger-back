@@ -14,7 +14,7 @@ export const addAnProduct = async ({
     try {
         const nameFormatted = getFormattedName(name)
         return await productRepository.save({
-            nameFormatted,
+            name:nameFormatted,
             quantity,
             imgSrc
         });

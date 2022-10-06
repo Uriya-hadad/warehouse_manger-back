@@ -5,21 +5,27 @@ import bcrypt from "bcrypt"
 import jsonwebtoken from "jsonwebtoken"
 import {User} from "../entity/User";
 import {QueryFailedError} from "typeorm";
+import {generateConfirmationLink} from "../utils/confirmationLinkGenerator";
+import {sendEmail} from "../utils/emailClient";
 
 
-export const register = async ({username, password}) => {
+export const register = async ({username, email, password}) => {
     username = username.toLowerCase();
     const hashPassword = await bcrypt.hash(password, 10);
     try {
-        await usersRepository.save(
+        const user = await usersRepository.save(
             {
                 username,
-                password: hashPassword,
-                role: "Client"
+                email,
+                password: hashPassword
             }
         )
+        const link = generateConfirmationLink(process.env.BACKEND_URL, user.id);
+        const status = await sendEmail(email, username, link);
+        if (!status) throw new Error("Email not sent");
         return "User created successfully!"
     } catch (e) {
+        console.log(e)
         if (e instanceof QueryFailedError && e.driverError.code === "23505")
             throw new Error(`The username is taken`);
         throw new Error("User failed to be created...");
@@ -32,6 +38,9 @@ export const login = async ({username, password}) => {
     const user: User = await usersRepository.findOneBy({username});
     if (!user) {
         throw new Error("Username / password is incorrect!");
+    }
+    if (!user.confirm) {
+        throw new Error("Please confirm your email address");
     }
     const isAuthorities: boolean = await bcrypt.compare(password, user.password)
     if (isAuthorities) {

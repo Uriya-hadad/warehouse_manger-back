@@ -1,11 +1,16 @@
 import {usersRepository} from "../data-source";
+import {Response} from "express";
 
-export async function confirmUser(userId: string) {
+export async function confirmUser(userId: string, res: Response) {
     const user = await usersRepository.findOne({where:{id:userId}});
     if (!user) {
-        throw new Error("User not found");
+        res.status(404).send("Page not found");
+        return;
     }
-    user.confirm = true;
+    if (user.confirmed) {
+        return res.send("User already confirmed");
+    }
+    user.confirmed = true;
     await usersRepository.update({id: user.id}, user);
-    return;
+    return res.sendStatus(200);
 }

@@ -12,7 +12,7 @@ import {
     deleteAnProduct,
     changePropertiesOfProduct, addAnProduct, makeASell
 } from "./productsMutation";
-import {changeRole, login, register} from "./usersMutation";
+import {changeRole, login, register, requestPasswordLink, resetUserPassword} from "./usersMutation";
 
 
 export const schema: GraphQLSchema = buildSchema(`
@@ -48,6 +48,8 @@ export const schema: GraphQLSchema = buildSchema(`
         login(username: String!,password:String!):String
         register(username: String!,email:String!,password:String!):String
         changeRole(username: String!,reqRole:String!):User
+        requestPasswordLink(email:String!):String
+        resetUserPassword(userId:String!, password:String!):String
     }
 `);
 
@@ -63,5 +65,7 @@ export const root = {
     changePropertiesOfProduct,
     login,
     register,
-    changeRole
+    changeRole,
+    requestPasswordLink,
+    resetUserPassword
 }

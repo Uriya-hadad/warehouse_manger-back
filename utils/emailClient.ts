@@ -8,7 +8,16 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-export async function sendEmail(email: string, username: string, link: string): Promise<boolean> {
+export async function sendEmail(email: string, username: string, mailOptions: any, link: string): Promise<boolean> {
+    try {
+        await transporter.sendMail(mailOptions);
+        return true
+    } catch (e) {
+        return false;
+    }
+}
+
+export function generateConfirmationBodyMail(email: string, username: string,link:string): { to:string,subject: string; text: string } {
     const mailOptions = {
         to: email,
         subject: 'Thank you for registering to our website',
@@ -19,10 +28,19 @@ export async function sendEmail(email: string, username: string, link: string): 
          Verify your email address: ${link}
         `
     };
-    try {
-        await transporter.sendMail(mailOptions);
-        return true
-    } catch (e) {
-        return false;
-    }
+        return mailOptions;
+}
+
+export function generateRequestPasswordBodyMail(email: string, username: string,link:string): { to:string,subject: string; text: string } {
+    const mailOptions = {
+        to: email,
+        subject: 'password reset link',
+        text: `
+         Hello ${username}!
+         As you requested, here is the link to reset your password. 
+         Please click on the link below to reset your password.
+         Reset your password link: ${link}
+        `
+    };
+        return mailOptions;
 }

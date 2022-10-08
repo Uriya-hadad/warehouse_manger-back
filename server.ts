@@ -17,7 +17,7 @@ const PORT = process.env.PORT || 3001;
 const app: Express = express();
 
 app.use((req, res, next)=>{
-    res.setHeader('Access-Control-Allow-Origin', 'https://warehouse-staff.herokuapp.com');
+    res.setHeader('Access-Control-Allow-Origin', process.env.FRONTEND_URL);
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type,Authorization');
     if ('OPTIONS' == req.method) return res.sendStatus(204);
@@ -26,14 +26,14 @@ app.use((req, res, next)=>{
 app.use(express.json())
 
 app.get("/user/confirm/:pram", async (req, res) => {
-    await confirmUser(req.params.pram);
-    res.sendStatus(200);
+    await confirmUser(req.params.pram, res);
 })
 
 app.use('/server',checkPermission,graphqlHTTP({
     schema,
     rootValue: root
 }));
+
 app.use('',(req, res) => {
     res.status(404).send("page not found");
 });

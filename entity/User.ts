@@ -1,6 +1,6 @@
 import {
     Column,
-    Entity, PrimaryGeneratedColumn
+    Entity, Index, PrimaryGeneratedColumn
 } from "typeorm";
 
 @Entity()
@@ -8,18 +8,20 @@ export class User {
     @PrimaryGeneratedColumn("uuid")
     id: string;
 
-    @Column({ unique: true })
+    @Index('UQ_user_name', { unique: true })
+    @Column()
     username: string;
 
-    @Column({ unique: true })
+    @Index('UQ_user_email', { unique: true })
+    @Column()
     email: string;
 
-    @Column()
+    @Column({nullable: true})
     password: string;
 
     @Column({default:"Client"})
     role: string;
 
     @Column({default:false})
-    confirm: boolean;
+    confirmed: boolean;
 }

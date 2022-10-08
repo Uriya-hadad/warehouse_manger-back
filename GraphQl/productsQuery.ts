@@ -26,16 +26,16 @@ export const getAllProducts = async () => {
 export const searchForProducts = async ({name}) => {
     const nameLower = name.toLowerCase();
     const product = await productRepository.createQueryBuilder("product").where("LOWER(product.name)" +
-        " like :name", { name:`%${nameLower}%` }).getMany();
-    if (product.length === 0 || !product )throw new Error(`There is no product containing '${name}'`);
+        " like :name", {name: `%${nameLower}%`}).getMany();
+    if (product.length === 0 || !product) throw new Error(`There is no product containing '${name}'`);
     return product;
 };
 export const productStatus = async ({name}) => {
     const nameLower = name.toLowerCase();
     const product = await productRepository.createQueryBuilder("product").where("LOWER(product.name)" +
-        " like :name", { name:`${nameLower}` }).getOne();
-    if (!product )return {message:`There is no product containing '${name}'`};
-    const status = product.quantity>0? "Available":"Sold Out";
-    return {name:product.name,status:status};
+        " like :name", {name: `%${nameLower}%`}).getOne();
+    if (!product) return {message: `There is no product containing '${name}'`};
+    const status = product.quantity > 0 ? "Available" : "Sold Out";
+    return {name: product.name, status: status};
 };
 

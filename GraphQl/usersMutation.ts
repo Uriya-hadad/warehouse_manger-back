@@ -14,7 +14,6 @@ import {
     generateRequestPasswordBodyMail,
     sendEmail
 } from "../utils/emailClient";
-import {Response} from "express";
 
 const DUPLICATE_KEY_ERROR_CODE = "23505";
 
@@ -35,20 +34,20 @@ export const register = async ({username, email, password}) => {
         if (!status) throw new Error("Email not sent");
         return "Enter your email to confirm your account";
     } catch (e) {
-        if (e instanceof QueryFailedError && e.driverError.code === DUPLICATE_KEY_ERROR_CODE) {
-            if (e.driverError.constraint === 'UQ_user_email') throw new Error(`This email is taken`);
-            if (e.driverError.constraint === 'UQ_user_name') throw new Error(`This name is taken`);
+        if (e instanceof QueryFailedError) {
+            if (e.driverError.code === DUPLICATE_KEY_ERROR_CODE && e.driverError.constraint === 'UQ_user_email')
+                throw new Error(`This email is taken`);
         }
         throw new Error("User failed to be created...");
     }
 }
 
-export const login = async ({username, password}) => {
+export const login = async ({email, password}) => {
     const TTL = parseInt(process.env.TTL);
-    username = username.toLowerCase();
-    const user: User = await usersRepository.findOneBy({username});
+    email = email.toLowerCase();
+    const user: User = await usersRepository.findOneBy({email});
     if (!user) {
-        throw new Error("Username / password is incorrect!");
+        throw new Error("Email / password is incorrect!");
     }
     if (!user.confirmed) {
         throw new Error("Please confirm your email address");
@@ -60,14 +59,14 @@ export const login = async ({username, password}) => {
         })
         return (token);
     }
-    throw new Error("Username / password is incorrect!");
+    throw new Error("Email / password is incorrect!");
 }
 
-export const changeRole = async ({username, reqRole}) => {
-    username = username.toLowerCase();
-    const user: User = await usersRepository.findOneBy({username});
+export const changeRole = async ({email, reqRole}) => {
+    email = email.toLowerCase();
+    const user: User = await usersRepository.findOneBy({email});
     if (!user) {
-        throw new Error(`There is no user with username: ${username}`);
+        throw new Error(`There is no user with email: ${email}`);
     }
     user.role = reqRole;
     await usersRepository.update({username: user.username}, user);
@@ -79,7 +78,7 @@ export const requestPasswordLink = async ({email}) => {
     try {
         user = await usersRepository.findOneBy({email});
     } catch (e) {
-        throw new Error("password reset link not sent");
+        throw new Error("Password reset link not sent");
     }
     if (!user) {
         throw new Error(`There is no user with email: ${email}`);
@@ -99,5 +98,5 @@ export const resetUserPassword = async ({userId, password}) => {
     }
     user.password = await bcrypt.hash(password, 10);
     await usersRepository.update({id: userId}, user);
-    return `password changed successfully`;
+    return `Password changed successfully`;
 }

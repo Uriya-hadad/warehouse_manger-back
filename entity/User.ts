@@ -8,7 +8,7 @@ export class User {
     @PrimaryGeneratedColumn("uuid")
     id: string;
 
-    @Index('UQ_user_name', { unique: true })
+    @Index('UQ_user_name', )
     @Column()
     username: string;
 

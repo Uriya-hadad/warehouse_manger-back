@@ -45,9 +45,9 @@ export const schema: GraphQLSchema = buildSchema(`
         addAnProduct(name: String!,quantity: Int!,imgSrc:String!): Product
         deleteAnProduct(name: String!): Product
         changePropertiesOfProduct(previousName: String!,name: String,imgSrc: String,quantity: Int,numberOfSales:Int):Product
-        login(username: String!,password:String!):String
+        login(email: String!,password:String!):String
         register(username: String!,email:String!,password:String!):String
-        changeRole(username: String!,reqRole:String!):User
+        changeRole(email: String!,reqRole:String!):User
         requestPasswordLink(email:String!):String
         resetUserPassword(userId:String!, password:String!):String
     }

@@ -45,6 +45,5 @@ Out" - The product is currently unavailable in the warehouse.</td>
   </tr>
 </table>
 
-<p>live version: <a href="https://warehouse-staff.herokuapp.
-com/">https://warehouse-staff.herokuapp.com/</a></p>
+<p>live version: <a href="https://warehouse-staff-front.cfapps.sap.hana.ondemand.com/">https://warehouse-staff-front.cfapps.sap.hana.ondemand.com/</a></p>
 <p>(The site is working as of 03/06/22)</p>

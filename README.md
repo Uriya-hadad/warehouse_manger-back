@@ -7,7 +7,7 @@ repo</a></p>
 <p>In addition there is a public API for use in software and web development.
 </p>
 <p>
-<b>Endpoint:</b>   <a>https://warehouse-staff-server.herokuapp.com/server</a>
+<b>Endpoint:</b>   <a>https://warehouse-staff-server.cfapps.sap.hana.ondemand.com/server</a>
 </p>
 <br>
 
